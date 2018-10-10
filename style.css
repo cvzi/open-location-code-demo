@@ -1,0 +1,7 @@
+﻿body { font-family:"new century schoolbook", arial, sans-serif; color: #122151; background:#f4f4fa}
+#mapid { height: 500px; width: 600px}
+#status { margin-top:0px}
+#statusold { margin-bottom:0px; color:gray; max-height:100px; overflow:auto}
+#attribution { font-size:smaller}
+.ie10up { display:none; }
+_:-ms-lang(x), .ie10up { display:block; }
