@@ -5,7 +5,7 @@ footer {background:#e4e4ea; margin:0px; padding: 10px 0; clear:left}
 figure {margin:0}
 .fl {float:left}
 #ctrl {padding-right:15px; margin-right:15px}
-#desc {padding-right:15px; margin-right:15px; max-width:40%}
+#desc {padding-right:15px; margin-right:15px; max-width:700px}
 #attribution { font-size:smaller; padding: 5px; margin: 0 auto; max-width: 1500px}
 #mapid { height: 500px; width: 600px}
 #status { margin-top:0px}
