@@ -1,6 +1,6 @@
 ﻿body { font-family:"new century schoolbook", arial, sans-serif; color: #122151; background:#f4f4fa; padding:0px; margin:0px}
 header { background:#d4d4ea; color:#000; margin:0px; padding: 10px 0; min-height: 100px; text-align:center}
-article { padding: 5px; max-width: 1500px; margin: 0 auto}
+article { padding: 5px 15px; max-width: 1500px; margin: 0 auto}
 footer {background:#e4e4ea; margin:0px; padding: 10px 0; clear:left}
 figure {margin:0}
 .fl {float:left}
