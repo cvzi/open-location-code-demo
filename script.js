@@ -10,8 +10,8 @@ var layers = [];
 
 function main() {
   
-  var width = Math.floor(screen.width*0.7);
-  var height = Math.floor(screen.height*0.6);
+  var width = Math.floor(window.outerWidth*0.7);
+  var height = Math.floor(window.outerHeight*0.6);
   width = width>1400?1400:(width<400?400:width);
   height = height>800?800:(height<300?300:height);
   document.getElementById("mapid").style.width =  width+ "px";
