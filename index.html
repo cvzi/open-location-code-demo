@@ -50,7 +50,7 @@ if (document.readyState === "loading") {
     Open Location Code are short codes that can be used like street addresses. Instead of a pair of coordinates they encode an area. A code consists of 8 "digits", a "+" symbol and optional digits after the "+". Every two digits specify the area more accurately. The digits are represented in base 20 with a <abbr title="base 20 characters: 23456789CFGHJMPQRVWX">character set</abbr> that avoids similar looking characters.
     </p>
     <p>
-    You can find more information on plus codes on Google's webite <a href="https://plus.codes/">plus.codes</a> or on Wikipedia <a href="https://en.wikipedia.org/wiki/Open_Location_Code">Open Location Code</a>. For technical information there is a Github repository <a href="https://github.com/google/open-location-code">open-location-code</a>
+    You can find more information on plus codes on Google's website <a href="https://plus.codes/">plus.codes</a> or on Wikipedia <a href="https://en.wikipedia.org/wiki/Open_Location_Code">Open Location Code</a>. For technical information there is a Github repository <a href="https://github.com/google/open-location-code">open-location-code</a>
     </p>
   </div>
   </article>
@@ -79,7 +79,7 @@ if (document.readyState === "loading") {
       Type a location name or coordinates and calculate the corresponding Plus+Code. Click <q>Animate</q> to show all the nested areas that make up the code on the map.  
       <br>Click <q>Step</q> to shorten the code one step and show the result on the map.  
       <br><br>The shortening mechanism: <pre>8FXCCP66+R2C2P<mark>X</mark> &rArr; 8FXCCP66+R2C2<mark>P</mark> &rArr; ... &rArr; 8FXCCP66+<mark>R2</mark> &rArr; 8FXCCP<mark>66</mark>+ &rArr; 8FXC<mark>CP</mark><span class="silver">00</span>+ &rArr; 8F<mark>XC</mark><span class="silver">0000</span>+ &rArr; 8F<span class="silver">000000</span>+</pre>
-      The first ten <abbr title="23456789CFGHJMPQRVWX">digits</abbr> encode longitude and latitude. To shorten them one needs to remove two digits. The eleventh and follwing digits simply divide the area in twenty rectangles and can therefore be shortened digit by digit. For more information take a look a the <a href="https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc#open-location-code-specification">specifications</a> 8. and 9.
+      The first ten <abbr title="23456789CFGHJMPQRVWX">digits</abbr> encode longitude and latitude. To shorten them one needs to remove two digits. The eleventh and following digits simply divide the area in twenty rectangles and can therefore be shortened digit by digit. For more information take a look a the <a href="https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc#open-location-code-specification">specifications</a> 8. and 9.
       </p>
   </div>
   </article>
