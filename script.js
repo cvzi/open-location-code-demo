@@ -13,7 +13,7 @@ function main() {
   var width = Math.floor(window.innerWidth*0.6);
   var height = Math.floor(window.innerHeight*0.6);
   width = width>1400?1400:(width<400?400:width);
-  height = height>1000?1000:(height<400?400:height);
+  height = height>800?800:(height<300?300:height);
   document.getElementById("mapid").style.width =  width+ "px";
   document.getElementById("mapid").style.height = height + "px";
   
