@@ -37,20 +37,31 @@ if (document.readyState === "loading") {
 </script>
 </head>
 <body>
+  <header>
   <h1>Demo for Open Location Codes <img src="static/pc-logo.svg" alt="Plus Codes Logo"></h1>
+  </header>
+  <main>
+  <article>
   <div>
     <p>
-    This is a demonstration of the structure of Google Plus+Codes or Open Location Codes. 
+    This is a demonstration of the structure of Google Plus+Codes or Open Location Codes.
     </p>
     <p>
-    Open Location Code are short codes that can be used like street addresses. Instead of a pair of coordinates they encode an area. A code consists of 8 "digits", a "+" symbol and optional digits after the "+". Every two digits specify the area more accurately. The digits are represented in base 20 with a character set that avoids similar looking characters.
+    Open Location Code are short codes that can be used like street addresses. Instead of a pair of coordinates they encode an area. A code consists of 8 "digits", a "+" symbol and optional digits after the "+". Every two digits specify the area more accurately. The digits are represented in base 20 with a <abbr title="base 20 characters: 23456789CFGHJMPQRVWX">character set</abbr> that avoids similar looking characters.
     </p>
     <p>
     You can find more information on plus codes on Google's webite <a href="https://plus.codes/">plus.codes</a> or on Wikipedia <a href="https://en.wikipedia.org/wiki/Open_Location_Code">Open Location Code</a>. For technical information there is a Github repository <a href="https://github.com/google/open-location-code">open-location-code</a>
     </p>
   </div>
+  </article>
+  <article>
+  <div class="ie10up">
+  Sorry, this website does not work in Internet Explorer
+  </div>
+  <figure>
   <div id="mapid"></div>
-  <div>
+  </figure>
+  <div class="fl" id="ctrl">
     <p>
       Location: <input type="text" id="location" value="49.4120625,8.7104375"> 
       <button id="btn_find">Calculate</button> Plus code:<input type="text" id="olcode" value="">
@@ -63,22 +74,31 @@ if (document.readyState === "loading") {
     </p>
     <div><pre id="statusold"></pre><pre id="status"></pre></div>
   </div>
-  <div class="ie10up">
-  Sorry, this website does not work in Internet Explorer
+  <div class="fl" id="desc">
+    <p>
+      Type a location name or coordinates and calculate the corresponding Plus+Code. Click <q>Animate</q> to show all the nested areas that make up the code on the map.  
+      <br>Click <q>Step</q> to shorten the code one step and show the result on the map.  
+      <br><br>The shortening mechanism: <pre>8FXCCP66+R2C2P<mark>X</mark> &rArr; 8FXCCP66+R2C2<mark>P</mark> &rArr; ... &rArr; 8FXCCP66+<mark>R2</mark> &rArr; 8FXCCP<mark>66</mark>+ &rArr; 8FXC<mark>CP</mark><span class="silver">00</span>+ &rArr; 8F<mark>XC</mark><span class="silver">0000</span>+ &rArr; 8F<span class="silver">000000</span>+</pre>
+      The first ten <abbr title="23456789CFGHJMPQRVWX">digits</abbr> encode longitude and latitude. To shorten them one needs to remove two digits. The eleventh and follwing digits simply divide the area in twenty rectangles and can therefore be shortened digit by digit. For more information take a look a the <a href="https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc#open-location-code-specification">specifications</a> 8. and 9.
+      </p>
   </div>
+  </article>
+  </main>
+  <footer>
   <div id="attribution">
     <p>
-      <br><br>Map <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>
+      Map <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>
       <br>Geocode NOTICE: © 2018 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service (<a href="https://www.mapbox.com/about/maps/">https://www.mapbox.com/about/maps/</a>). This response and the information it contains may not be retained. POI(s) provided by Foursquare.
       <br>Logos from <a href="https://plus.codes">plus.codes</a>
       <br>License <a href="LICENSE">LICENSE</a>
       <br>Source code <a href="https://github.com/cvzi/open-location-code-demo">github.com/cvzi/open-location-code-demo</a>
       </p>
   </div>
-  
+  </footer>
     <!-- https://github.com/tholman/github-corners -->
     <div>
     <a href="https://github.com/cvzi/open-location-code-demo" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
     </div>
+    
 </body>
 </html>

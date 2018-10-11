@@ -9,6 +9,15 @@ var iv;
 var layers = [];
 
 function main() {
+  
+  var width = Math.floor(window.innerWidth*0.6);
+  var height = Math.floor(window.innerHeight*0.6);
+  width = width>1400?1400:(width<400?400:width);
+  height = height>1000?1000:(height<400?400:height);
+  document.getElementById("mapid").style.width =  width+ "px";
+  document.getElementById("mapid").style.height = height + "px";
+  
+  
   map = L.map('mapid').setView([49.41, 8.71], 11);
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -96,10 +105,10 @@ function calcCode(ev, length, coords, name, foundcb) {
       if(ev !== -1) {
         geocode(query, function(coords, name) {
           calcCode(-1, length, coords, name, foundcb);
-          print("Found: " + name + "\n -> "+coords);
+          print("Geocoding found: " + name + "\n -> "+coords);
         });
       } else {
-        print("Not found: " + query);
+        print("Geocoding not found: " + query);
         highlight(document.getElementById("location"), colors.red);
       }
       return;
