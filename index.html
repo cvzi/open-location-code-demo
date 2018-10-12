@@ -81,7 +81,28 @@ if (document.readyState === "loading") {
       <br><br>The shortening mechanism: <pre>8FXCCP66+R2C2P<mark>X</mark> &rArr; 8FXCCP66+R2C2<mark>P</mark> &rArr; ... &rArr; 8FXCCP66+<mark>R2</mark> 
 &rArr; 8FXCCP<mark>66</mark>+ &rArr; 8FXC<mark>CP</mark><span class="silver">00</span>+ &rArr; 8F<mark>XC</mark><span class="silver">0000</span>+ &rArr; 8F<span class="silver">000000</span>+</pre>
       The first ten <abbr title="23456789CFGHJMPQRVWX">digits</abbr> encode longitude and latitude. To shorten them one needs to remove two digits. The eleventh and following digits simply divide the area in twenty rectangles and can therefore be shortened digit by digit. For more information take a look a the <a href="https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc#open-location-code-specification">specifications</a> 8. and 9.
-      </p>
+    </p>
+    <p>
+    The code digits in base 20:
+      <pre><script>
+  let d = "23456789CFGHJMPQRVWX";
+  for(let i = 0; i < 20; i++) {
+    let s = document.createElement("sub");
+    document.currentScript.parentNode.appendChild(document.createTextNode((i > 9 ?" ":"") + d[i]));
+    s.appendChild(document.createTextNode("20"));
+    document.currentScript.parentNode.appendChild(s);
+    document.currentScript.parentNode.appendChild(document.createTextNode(" "));
+  }
+  document.currentScript.parentNode.appendChild(document.createTextNode("\n"));
+  for(let i = 0; i < 20; i++) {
+    let s = document.createElement("sub");
+    document.currentScript.parentNode.appendChild(document.createTextNode(i));
+    s.appendChild(document.createTextNode("10"));
+    document.currentScript.parentNode.appendChild(s);
+    document.currentScript.parentNode.appendChild(document.createTextNode(" "));
+  }
+      </script></pre>
+    </p>
   </div>
   </article>
   </main>
