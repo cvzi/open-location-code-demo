@@ -25,6 +25,9 @@ function main() {
       id: 'mapbox.streets',
       accessToken: access_token
   }).addTo(map);
+  map.on('dblclick', onMapClick);
+  map.on('contextmenu', onMapClick);
+  
   document.getElementById("location").addEventListener("change", findCode);
   document.getElementById("btn_find").addEventListener("click", findCode);
   document.getElementById("btn_startani").addEventListener("click", animate);
@@ -39,6 +42,11 @@ function main() {
     document.getElementById("olcode").value = "";
     clearMap();
   });
+}
+
+function onMapClick(ev) {
+  document.getElementById("location").value = ev.latlng.lat + ", " + ev.latlng.lng;
+  calcCode();
 }
 
 function findCode() {
