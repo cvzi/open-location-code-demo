@@ -1,37 +1,39 @@
-﻿var colors = {
+﻿const colors = {
 red : "#fcc",
 green : "#baf0ba",
 yellow : "#ffa"
 };
+const maxZoom = 24;
 
 var map;
 var iv;
 var layers = [];
 
-function main() {
   
+function main() {
   var width = Math.floor(window.outerWidth*0.7);
   var height = Math.floor(window.outerHeight*0.6);
   width = width>1400?1400:(width<400?400:width);
   height = height>800?800:(height<300?300:height);
   document.getElementById("mapid").style.width =  width+ "px";
   document.getElementById("mapid").style.height = height + "px";
-  
-  
+
+
   map = L.map('mapid').setView([49.41, 8.71], 11);
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
+      maxZoom: maxZoom,
       id: 'mapbox.streets',
       accessToken: access_token
   }).addTo(map);
   map.on('dblclick', onMapClick);
   map.on('contextmenu', onMapClick);
-  
+
   document.getElementById("location").addEventListener("change", findCode);
   document.getElementById("btn_find").addEventListener("click", findCode);
   document.getElementById("btn_startani").addEventListener("click", animate);
   document.getElementById("btn_step").addEventListener("click", step);
+  document.getElementById("btn_grid").addEventListener("click", grid);
   document.getElementById("olcode").addEventListener("keyup", showCodeOnMap);
   document.getElementById("btn_stopani").addEventListener("click", function() {
     stopanimate();
@@ -42,6 +44,7 @@ function main() {
     document.getElementById("olcode").value = "";
     clearMap();
   });
+
 }
 
 function onMapClick(ev) {
@@ -67,15 +70,16 @@ function showCodeOnMap() {
 
 function showRectangle() {
   // Show the rectangle of the current plus code
+  const alphabet = OpenLocationCode.getAlphabet();
   var olc = document.getElementById("olcode").value;
   var l = olc.length > 11 ? 11 : olc.length;
-  var lat = OpenLocationCode.getAlphabet().indexOf(olc.charAt(0).toUpperCase()) * OpenLocationCode.getAlphabet().length;
-  var lng = OpenLocationCode.getAlphabet().indexOf(olc.charAt(1).toUpperCase()) * OpenLocationCode.getAlphabet().length;
+  var lat = alphabet.indexOf(olc.charAt(0).toUpperCase()) * alphabet.length;
+  var lng = alphabet.indexOf(olc.charAt(1).toUpperCase()) * alphabet.length;
   var red = hex(l * 20);
   var green = hex(30);
   var blue = hex(255 * lat*lng / (499*499));
   var opacity = l / 11.1;
-  
+
   var fullolc = paddCode(olc);
   try {
     var codeArea = OpenLocationCode.decode(fullolc);
@@ -87,10 +91,12 @@ function showRectangle() {
      return;
     }
   }
+  
   var bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
-  map.fitBounds(bounds);
+  map.fitBounds(bounds, {maxZoom: map.getZoom()>18?maxZoom:18});  // Zoom in, but not to close
   var rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(map);
   layers.push(rect);
+  
 }
 
 function clearMap() {
@@ -137,7 +143,7 @@ function animate(ev, length, coords, name) {
   stopanimate();
   backgroundColor(document.getElementById("btn_startani"));
   clearMap();
-  
+
   if(!document.getElementById("location").value) {
     if(document.getElementById("olcode").value) {
       // Calculate location from code
@@ -163,21 +169,21 @@ function animate(ev, length, coords, name) {
 
 function step(ev) {
   // Manual steps instead of animation
-  
+
   if(document.getElementById("olcode").value.length < 5) {
     return;
   }
-  
+
   highlight(document.getElementById("btn_step"));
-  
+
   if(document.getElementById("btn_step").dataset.hasOwnProperty("active")) {
     shorten();
     return;
   }
-  
+
   stopanimate();
   clearMap();
-  
+
   if(!document.getElementById("location").value) {
     if(document.getElementById("olcode").value) {
       // Calculate location from code
@@ -210,11 +216,11 @@ function stopanimate() {
 function shorten() {
   // Shorten the code one step and show the result on the map
   var olc = document.getElementById("olcode").value;
-  if(olc.endsWith("+")) { // No precision // Extra precision: 42225322+ -> 42222253+
+  if(olc.endsWith("+")) {  // No precision // Extra precision: 42225322+ -> 42222253+
     olc = olc.slice(0, olc.length-3) + "+";
   } else if(!olc.slice(0, olc.length-2).endsWith("+")) { // Extra precision: 42222225+22232 -> 42222225+2223
     olc = olc.slice(0, olc.length-1);
-  } else { // Normal precision: 42222253+22 -> 42222253
+  } else {  // Normal precision: 42222253+22 -> 42222253
     olc = olc.slice(0, olc.length-2);
   }
   document.getElementById("olcode").value = olc;
@@ -224,3 +230,72 @@ function shorten() {
     stopanimate();
   }
 }
+
+function grid() {
+  // Show the grid around the current plus code
+
+  stopanimate();
+  clearMap();
+
+  var olc = document.getElementById("olcode").value;
+
+  var red = hex(120);
+  var green = hex(120);
+  var blue = hex(120);
+  var opacity = 0.3;
+
+  // Validate code
+  var fullolc = paddCode(olc);
+  try {
+    OpenLocationCode.decode(fullolc);
+    document.getElementById("olcode").title = "Full code: " + paddCode(olc);
+  } catch(e) {
+    if (e) {
+     print(e+"\nWithout padding: "+olc);
+     highlight(document.getElementById("olcode"), colors.red);
+     return;
+    }
+  }
+
+
+  // Create grid
+
+  const layerGroup = L.layerGroup();  // Group all rectangles and text together and draw them at once
+
+  for(let y = -2; y < 3; y++) {
+    for(let x = -3; x < 4; x++) {
+      if(x === 0 && y === 0) continue;
+
+      let movedolc = moveCode(fullolc, x, y);
+
+      let codeArea = OpenLocationCode.decode(movedolc);
+
+      let bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
+
+      paintRectangle(layerGroup, bounds, "#"+red+green+blue, opacity);
+
+      // Add transparent marker with text tooltip
+      let marker = new L.marker([0.5*(bounds[0][0]+bounds[1][0]), 0.5*(bounds[0][1]+bounds[1][1])], { opacity: 0.01 });
+      let label = unPaddCode(movedolc);
+      if(label.length >= 11) {
+        label = "+" + label.split("+")[1]
+      }
+      marker.bindTooltip(label, {permanent: true, className: "mapgridlabel", direction: "center", offset: [0, 0] });
+      marker.addTo(layerGroup);
+
+    }
+  }
+
+  layerGroup.addTo(map);
+  layers.push(layerGroup);
+
+  showRectangle();
+
+  map.zoomOut();
+}
+
+function paintRectangle(mapLayer, bounds, color, opacity) {
+  map.fitBounds(bounds);
+  var rect = L.rectangle(bounds, {color: color, weight: 1, opacity:opacity}).addTo(mapLayer);
+}
+
