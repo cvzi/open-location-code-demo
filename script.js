@@ -1,100 +1,43 @@
-﻿const colors = {
+﻿const COLORS = {
 red : "#fcc",
 green : "#baf0ba",
 yellow : "#ffa"
 };
-const maxZoom = 24;
+const MAX_ZOOM = 24;
 
 var map;
 var iv;
-var layers = [];
-
-  
-function main() {
-  var width = Math.floor(window.outerWidth*0.7);
-  var height = Math.floor(window.outerHeight*0.6);
-  width = width>1400?1400:(width<400?400:width);
-  height = height>800?800:(height<300?300:height);
-  document.getElementById("mapid").style.width =  width+ "px";
-  document.getElementById("mapid").style.height = height + "px";
-
-
-  map = L.map('mapid').setView([49.41, 8.71], 11);
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: maxZoom,
-      id: 'mapbox.streets',
-      accessToken: access_token
-  }).addTo(map);
-  map.on('dblclick', onMapClick);
-  map.on('contextmenu', onMapClick);
-
-  document.getElementById("location").addEventListener("change", findCode);
-  document.getElementById("btn_find").addEventListener("click", findCode);
-  document.getElementById("btn_startani").addEventListener("click", animate);
-  document.getElementById("btn_step").addEventListener("click", step);
-  document.getElementById("btn_grid").addEventListener("click", grid);
-  document.getElementById("olcode").addEventListener("keyup", showCodeOnMap);
-  document.getElementById("btn_stopani").addEventListener("click", function() {
-    stopanimate();
-  });
-  document.getElementById("btn_clear").addEventListener("click", function() {
-    stopanimate();
-    document.getElementById("location").value = "";
-    document.getElementById("olcode").value = "";
-    clearMap();
-  });
-
-}
-
-function onMapClick(ev) {
-  document.getElementById("location").value = ev.latlng.lat + ", " + ev.latlng.lng;
-  calcCode();
-}
-
-function findCode() {
-  // Button handler
-  if(document.getElementById("location").value) {
-    calcCode();
-  }
-}
-
-function showCodeOnMap() {
-  // Button handler
-  if(document.getElementById("olcode").value) {
-    showRectangle();
-  }
-}
-
+const layers = [];
 
 
 function showRectangle() {
   // Show the rectangle of the current plus code
   const alphabet = OpenLocationCode.getAlphabet();
-  var olc = document.getElementById("olcode").value;
-  var l = olc.length > 11 ? 11 : olc.length;
-  var lat = alphabet.indexOf(olc.charAt(0).toUpperCase()) * alphabet.length;
-  var lng = alphabet.indexOf(olc.charAt(1).toUpperCase()) * alphabet.length;
-  var red = hex(l * 20);
-  var green = hex(30);
-  var blue = hex(255 * lat*lng / (499*499));
-  var opacity = l / 11.1;
+  const olc = document.getElementById("olcode").value;
+  const l = olc.length > 11 ? 11 : olc.length;
+  const lat = alphabet.indexOf(olc.charAt(0).toUpperCase()) * alphabet.length;
+  const lng = alphabet.indexOf(olc.charAt(1).toUpperCase()) * alphabet.length;
+  const red = hex(l * 20);
+  const green = hex(30);
+  const blue = hex(255 * lat*lng / (499*499));
+  const opacity = l / 11.1;
 
-  var fullolc = paddCode(olc);
+  const fullolc = paddCode(olc);
+  let codeArea;
   try {
-    var codeArea = OpenLocationCode.decode(fullolc);
+    codeArea = OpenLocationCode.decode(fullolc);
     document.getElementById("olcode").title = "Full code: " + paddCode(olc);
   } catch(e) {
     if (e) {
      print(e+"\nWithout padding: "+olc);
-     highlight(document.getElementById("olcode"), colors.red);
+     highlight(document.getElementById("olcode"), COLORS.red);
      return;
     }
   }
   
-  var bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
-  map.fitBounds(bounds, {maxZoom: map.getZoom()>18?maxZoom:18});  // Zoom in, but not to close
-  var rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(map);
+  const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
+  map.fitBounds(bounds, {maxZoom: map.getZoom()>18?MAX_ZOOM:18});  // Zoom in, but not to close
+  const rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(map);
   layers.push(rect);
   
 }
@@ -111,10 +54,10 @@ function calcCode(ev, length, coords, name, foundcb) {
   if(!length) {
     length = OpenLocationCode.CODE_PRECISION_EXTRA;
   }
-  var query = document.getElementById("location").value;
+  const query = document.getElementById("location").value;
   if(!coords) {
     try {
-      var coords = query.match(/[-+]?(\d+\.\d+)\s*,\s*[-+]?(\d+.\d+)/).slice(1).map(s => parseFloat(s));
+      coords = query.match(/[-+]?(\d+\.\d+)\s*,\s*[-+]?(\d+.\d+)/).slice(1).map(s => parseFloat(s));
     } catch(e) {
       if(ev !== -1) {
         geocode(query, function(coords, name) {
@@ -123,15 +66,15 @@ function calcCode(ev, length, coords, name, foundcb) {
         });
       } else {
         print("Geocoding not found: " + query);
-        highlight(document.getElementById("location"), colors.red);
+        highlight(document.getElementById("location"), COLORS.red);
       }
       return;
     }
   }
-  var olc = OpenLocationCode.encode(coords[0], coords[1], length);
+  const olc = OpenLocationCode.encode(coords[0], coords[1], length);
   document.getElementById("olcode").value = olc;
   document.getElementById("olcode").title = "Full code: " + paddCode(olc);
-  highlight(document.getElementById("olcode"), colors.yellow);
+  highlight(document.getElementById("olcode"), COLORS.yellow);
   showRectangle(olc);
   if(foundcb) {
     foundcb(olc);
@@ -147,15 +90,15 @@ function animate(ev, length, coords, name) {
   if(!document.getElementById("location").value) {
     if(document.getElementById("olcode").value) {
       // Calculate location from code
-      var olc = document.getElementById("olcode").value;
-      var fullolc = paddCode(olc);
+      const olc = document.getElementById("olcode").value;
+      const fullolc = paddCode(olc);
       try {
-        var codeArea = OpenLocationCode.decode(fullolc);
+        const codeArea = OpenLocationCode.decode(fullolc);
         document.getElementById("location").value = codeArea.latitudeCenter + ", " + codeArea.longitudeCenter;
       } catch(e) {
         if (e) {
          print(e+"\nWithout padding: "+olc);
-         highlight(document.getElementById("olcode"), colors.red);
+         highlight(document.getElementById("olcode"), COLORS.red);
          return;
         }
       }
@@ -163,8 +106,15 @@ function animate(ev, length, coords, name) {
   }
 
   calcCode(ev, length, coords, name, function() {
-    iv = window.setInterval(function() {shorten()}, 2000);
+    iv = window.setInterval(function() { shorten(); }, 2000);
   });
+}
+
+function stopanimate() {
+  // Stop animation
+  clearInterval(iv);
+  backgroundColorOriginal(document.getElementById("btn_startani"));
+  delete document.getElementById("btn_step").dataset.active;
 }
 
 function step(ev) {
@@ -187,15 +137,15 @@ function step(ev) {
   if(!document.getElementById("location").value) {
     if(document.getElementById("olcode").value) {
       // Calculate location from code
-      var olc = document.getElementById("olcode").value;
-      var fullolc = paddCode(olc);
+      const olc = document.getElementById("olcode").value;
+      const fullolc = paddCode(olc);
       try {
-        var codeArea = OpenLocationCode.decode(fullolc);
+        const codeArea = OpenLocationCode.decode(fullolc);
         document.getElementById("location").value = codeArea.latitudeCenter + ", " + codeArea.longitudeCenter;
       } catch(e) {
         if (e) {
          print(e+"\nWithout padding: "+olc);
-         highlight(document.getElementById("olcode"), colors.red);
+         highlight(document.getElementById("olcode"), COLORS.red);
          return;
         }
       }
@@ -206,16 +156,9 @@ function step(ev) {
   shorten();
 }
 
-function stopanimate() {
-  // Stop animation
-  clearInterval(iv);
-  backgroundColorOriginal(document.getElementById("btn_startani"));
-  delete document.getElementById("btn_step").dataset.active;
-}
-
 function shorten() {
   // Shorten the code one step and show the result on the map
-  var olc = document.getElementById("olcode").value;
+  let olc = document.getElementById("olcode").value;
   if(olc.endsWith("+")) {  // No precision // Extra precision: 42225322+ -> 42222253+
     olc = olc.slice(0, olc.length-3) + "+";
   } else if(!olc.slice(0, olc.length-2).endsWith("+")) { // Extra precision: 42222225+22232 -> 42222225+2223
@@ -237,22 +180,22 @@ function grid() {
   stopanimate();
   clearMap();
 
-  var olc = document.getElementById("olcode").value;
+  const olc = document.getElementById("olcode").value;
 
-  var red = hex(120);
-  var green = hex(120);
-  var blue = hex(120);
-  var opacity = 0.3;
+  const red = hex(120);
+  const green = hex(120);
+  const blue = hex(120);
+  const opacity = 0.3;
 
   // Validate code
-  var fullolc = paddCode(olc);
+  const fullolc = paddCode(olc);
   try {
     OpenLocationCode.decode(fullolc);
     document.getElementById("olcode").title = "Full code: " + paddCode(olc);
   } catch(e) {
     if (e) {
      print(e+"\nWithout padding: "+olc);
-     highlight(document.getElementById("olcode"), colors.red);
+     highlight(document.getElementById("olcode"), COLORS.red);
      return;
     }
   }
@@ -266,16 +209,16 @@ function grid() {
     for(let x = -3; x < 4; x++) {
       if(x === 0 && y === 0) continue;
 
-      let movedolc = moveCode(fullolc, x, y);
+      const movedolc = moveCode(fullolc, x, y);
 
-      let codeArea = OpenLocationCode.decode(movedolc);
+      const codeArea = OpenLocationCode.decode(movedolc);
 
-      let bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
+      const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
 
-      paintRectangle(layerGroup, bounds, "#"+red+green+blue, opacity);
+      L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(layerGroup);
 
       // Add transparent marker with text tooltip
-      let marker = new L.marker([0.5*(bounds[0][0]+bounds[1][0]), 0.5*(bounds[0][1]+bounds[1][1])], { opacity: 0.01 });
+      const marker = new L.marker([0.5*(bounds[0][0]+bounds[1][0]), 0.5*(bounds[0][1]+bounds[1][1])], { opacity: 0.01 });
       let label = unPaddCode(movedolc);
       if(label.length >= 11) {
         label = "+" + label.split("+")[1]
@@ -294,8 +237,58 @@ function grid() {
   map.zoomOut();
 }
 
-function paintRectangle(mapLayer, bounds, color, opacity) {
-  map.fitBounds(bounds);
-  var rect = L.rectangle(bounds, {color: color, weight: 1, opacity:opacity}).addTo(mapLayer);
+function onMapClick(ev) {
+  document.getElementById("location").value = ev.latlng.lat + ", " + ev.latlng.lng;
+  calcCode();
 }
 
+function findCode() {
+  // Button handler
+  if(document.getElementById("location").value) {
+    calcCode();
+  }
+}
+
+function showCodeOnMap() {
+  // Button handler
+  if(document.getElementById("olcode").value) {
+    showRectangle();
+  }
+}
+
+function main() {
+  let width = Math.floor(window.outerWidth*0.7);
+  let height = Math.floor(window.outerHeight*0.6);
+  width = width>1400?1400:(width<400?400:width);
+  height = height>800?800:(height<300?300:height);
+  document.getElementById("mapid").style.width =  width+ "px";
+  document.getElementById("mapid").style.height = height + "px";
+
+
+  map = L.map("mapid").setView([49.41, 8.71], 11);
+  L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      maxZoom: MAX_ZOOM,
+      id: "mapbox.streets",
+      accessToken: ACCESS_TOKEN
+  }).addTo(map);
+  map.on("dblclick", onMapClick);
+  map.on("contextmenu", onMapClick);
+
+  document.getElementById("location").addEventListener("change", findCode);
+  document.getElementById("btn_find").addEventListener("click", findCode);
+  document.getElementById("btn_startani").addEventListener("click", animate);
+  document.getElementById("btn_step").addEventListener("click", step);
+  document.getElementById("btn_grid").addEventListener("click", grid);
+  document.getElementById("olcode").addEventListener("keyup", showCodeOnMap);
+  document.getElementById("btn_stopani").addEventListener("click", function() {
+    stopanimate();
+  });
+  document.getElementById("btn_clear").addEventListener("click", function() {
+    stopanimate();
+    document.getElementById("location").value = "";
+    document.getElementById("olcode").value = "";
+    clearMap();
+  });
+
+}
