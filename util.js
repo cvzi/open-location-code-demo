@@ -33,17 +33,17 @@ function highlight(el, highlightColor, time) {
   if(!el.dataset.hasOwnProperty("orgColor")) {
     el.dataset.orgColor = el.style.backgroundColor;
   }
-  el.style.backgroundColor = highlightColor?highlightColor:"#ffa";
+  el.style.backgroundColor = highlightColor ? highlightColor : "#ffa";
   window.setTimeout(function() {
     el.style.backgroundColor = el.dataset.orgColor;
     delete el.dataset.orgColor;
-  }, time?time:700);
+  }, time ? time : 700);
 }
 
 function backgroundColor(el, highlightColor) {
   // Set background color and store original color
   el.dataset.orgColor = el.style.backgroundColor;
-  el.style.backgroundColor = highlightColor?highlightColor:"#baf0ba";
+  el.style.backgroundColor = highlightColor ? highlightColor : "#baf0ba";
 }
 
 function backgroundColorOriginal(el) {
@@ -63,7 +63,7 @@ function hex(i) {
 
 function paddCode(olc) {
   // Zero-padd a short plus code
-  var [a,b] = olc.split("+");
+  var [a, b] = olc.split("+");
   if(a.length === 8 && !b) {
     return a + "+";
   }
@@ -75,12 +75,12 @@ function paddCode(olc) {
 
 function unPaddCode(olc) {
   // Remove zero-padd of a short plus code
-  var [a,b] = olc.split("+");
+  var [a, b] = olc.split("+");
   while(b && b.endsWith("0")) {
-    b = b.substring(0, b.length-1);
+    b = b.substring(0, b.length - 1);
   }
   while(a && a.endsWith("0")) {
-    a = a.substring(0, a.length-1);
+    a = a.substring(0, a.length - 1);
   }
   return a + "+" + b;
 }
@@ -102,45 +102,45 @@ function moveCode(olc, eastwest, northsouth) {
 
   if(olc.endsWith("+") || olc.length === 11) {  // Lat-lng version / Normal precision
     if(olc.indexOf("+") !== -1) {
-      olc = olc.replace("+","");  // Remove + for easier access with indices
+      olc = olc.replace("+", "");  // Remove + for easier access with indices
     }
 
-    const lastCharIndex = olc.length - (olc.endsWith("+")?2:1);
+    const lastCharIndex = olc.length - (olc.endsWith("+") ? 2 : 1);
 
     // Move north/south
-    let lat = alphabet.indexOf(olc.charAt(lastCharIndex-1).toUpperCase())+ northsouth;
+    let lat = alphabet.indexOf(olc.charAt(lastCharIndex - 1).toUpperCase()) + northsouth;
     if(lat < 0) {
       const quotient = Math.floor(lat/alphabet.length);
       lat += alphabet.length*-quotient;
-      const superLat = alphabet.indexOf(olc.charAt(lastCharIndex-3).toUpperCase()) + quotient;
-      olc = replaceChar(olc, alphabet[superLat], lastCharIndex-3);
+      const superLat = alphabet.indexOf(olc.charAt(lastCharIndex - 3).toUpperCase()) + quotient;
+      olc = replaceChar(olc, alphabet[superLat], lastCharIndex - 3);
     } else if(lat >= alphabet.length) {
       const quotient = Math.floor(lat/alphabet.length);
       lat = lat % alphabet.length;
-      const superLat = alphabet.indexOf(olc.charAt(lastCharIndex-3).toUpperCase()) + quotient;
-      olc = replaceChar(olc, alphabet[superLat], lastCharIndex-3);
+      const superLat = alphabet.indexOf(olc.charAt(lastCharIndex - 3).toUpperCase()) + quotient;
+      olc = replaceChar(olc, alphabet[superLat], lastCharIndex - 3);
     }
-    olc = replaceChar(olc, alphabet[lat], lastCharIndex-1);
+    olc = replaceChar(olc, alphabet[lat], lastCharIndex - 1);
 
     // Move east/west
     let lng = alphabet.indexOf(olc.charAt(lastCharIndex).toUpperCase()) + eastwest;
     if(lng < 0) {
-      const quotient = Math.floor(lng/alphabet.length);
-      lng += alphabet.length*-quotient;
-      const superLng = alphabet.indexOf(olc.charAt(lastCharIndex-2).toUpperCase()) - 1;
-      olc = replaceChar(olc, alphabet[superLng], lastCharIndex-2);
+      const quotient = Math.floor(lng / alphabet.length);
+      lng += alphabet.length * - quotient;
+      const superLng = alphabet.indexOf(olc.charAt(lastCharIndex - 2).toUpperCase()) - 1;
+      olc = replaceChar(olc, alphabet[superLng], lastCharIndex - 2);
     } else if(lng >= alphabet.length) {
-      const quotient = Math.floor(lng/alphabet.length);
+      const quotient = Math.floor(lng / alphabet.length);
       lng = lng % alphabet.length;
-      const superLng = alphabet.indexOf(olc.charAt(lastCharIndex-2).toUpperCase()) + quotient;
-      olc = replaceChar(olc, alphabet[superLng], lastCharIndex-2);
+      const superLng = alphabet.indexOf(olc.charAt(lastCharIndex - 2).toUpperCase()) + quotient;
+      olc = replaceChar(olc, alphabet[superLng], lastCharIndex - 2);
     }
     olc = replaceChar(olc, alphabet[lng], lastCharIndex);
 
 
     // Add +
     if(olc.length === 10) {
-      olc = olc.substr(0,8) + "+" + olc.substr(8);
+      olc = olc.substr(0, 8) + "+" + olc.substr(8);
     } else {
       olc += "+";
     }
@@ -164,16 +164,16 @@ function moveCode(olc, eastwest, northsouth) {
     northsouth *= -1;
 
     // Move east/west
-    const rowNumber = Math.floor(value/4);
-    const newRowNumber = Math.floor((value+eastwest)/4);
+    const rowNumber = Math.floor(value / 4);
+    const newRowNumber = Math.floor((value + eastwest) / 4);
     if(rowNumber !== newRowNumber) {  // Out of row
 
       const lastChar = olc.charAt(charIndex);  // Shorten the code one digit
-      olc = moveCode(olc.substring(0,old.length-1), newRowNumber-rowNumber, 0);  //  Move recursively
+      olc = moveCode(olc.substring(0, old.length - 1), newRowNumber - rowNumber, 0);  //  Move recursively
       olc += lastChar;  // Add the char again
 
       value = value+eastwest;
-      value -= (newRowNumber-rowNumber)*4;
+      value -= (newRowNumber - rowNumber) * 4;
 
       olc = replaceChar(olc, alphabet[value], charIndex);
     } else {
@@ -182,22 +182,22 @@ function moveCode(olc, eastwest, northsouth) {
     }
 
     // Move north/south
-    if(value+4*northsouth < 0 || value+4*northsouth >= 20) {  // Out of box
+    if(value+4*northsouth < 0 || value + 4 * northsouth >= 20) {  // Out of box
 
-      const boxDiff = Math.floor((value+4*northsouth)/20);
+      const boxDiff = Math.floor((value + 4 * northsouth) / 20);
 
       const lastChar = olc.charAt(charIndex);  // Shorten the code one digit
-      olc = moveCode(olc.substring(0,old.length-1), 0, boxDiff);  //  Move recursively
+      olc = moveCode(olc.substring(0, old.length- 1), 0, boxDiff);  //  Move recursively
       olc += lastChar;  // Add the char again
 
-      value = (value+4*northsouth)%20
+      value = (value + 4 * northsouth)  % 20;
       if(value < 0) {
         value += 20;
       }
 
       olc = replaceChar(olc, alphabet[value], charIndex);
     } else {
-      value = value+4*northsouth;
+      value = value + 4 * northsouth;
       olc = replaceChar(olc, alphabet[value], charIndex);
     }
 

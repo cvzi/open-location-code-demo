@@ -36,8 +36,8 @@ function showRectangle() {
   }
   
   const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
-  map.fitBounds(bounds, {maxZoom: map.getZoom()>18?MAX_ZOOM:18});  // Zoom in, but not to close
-  const rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(map);
+  map.fitBounds(bounds, {maxZoom: map.getZoom() > 18 ? MAX_ZOOM : 18});  // Zoom in, but not to close
+  const rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity: opacity}).addTo(map);
   layers.push(rect);
   
 }
@@ -160,11 +160,11 @@ function shorten() {
   // Shorten the code one step and show the result on the map
   let olc = document.getElementById("olcode").value;
   if(olc.endsWith("+")) {  // No precision // Extra precision: 42225322+ -> 42222253+
-    olc = olc.slice(0, olc.length-3) + "+";
-  } else if(!olc.slice(0, olc.length-2).endsWith("+")) { // Extra precision: 42222225+22232 -> 42222225+2223
-    olc = olc.slice(0, olc.length-1);
+    olc = olc.slice(0, olc.length - 3) + "+";
+  } else if(!olc.slice(0, olc.length - 2).endsWith("+")) { // Extra precision: 42222225+22232 -> 42222225+2223
+    olc = olc.slice(0, olc.length - 1);
   } else {  // Normal precision: 42222253+22 -> 42222253
-    olc = olc.slice(0, olc.length-2);
+    olc = olc.slice(0, olc.length - 2);
   }
   document.getElementById("olcode").value = olc;
   document.getElementById("olcode").title = "Full code: " + paddCode(olc);
@@ -194,7 +194,7 @@ function grid() {
     document.getElementById("olcode").title = "Full code: " + paddCode(olc);
   } catch(e) {
     if (e) {
-     print(e+"\nWithout padding: "+olc);
+     print(e+"\nWithout padding: " + olc);
      highlight(document.getElementById("olcode"), COLORS.red);
      return;
     }
@@ -218,10 +218,10 @@ function grid() {
       L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity:opacity}).addTo(layerGroup);
 
       // Add transparent marker with text tooltip
-      const marker = new L.marker([0.5*(bounds[0][0]+bounds[1][0]), 0.5*(bounds[0][1]+bounds[1][1])], { opacity: 0.01 });
+      const marker = new L.marker([0.5 * (bounds[0][0] + bounds[1][0]), 0.5 * (bounds[0][1] + bounds[1][1])], { opacity: 0.01 });
       let label = unPaddCode(movedolc);
       if(label.length >= 11) {
-        label = "+" + label.split("+")[1]
+        label = "+" + label.split("+")[1];
       }
       marker.bindTooltip(label, {permanent: true, className: "mapgridlabel", direction: "center", offset: [0, 0] });
       marker.addTo(layerGroup);
@@ -257,11 +257,11 @@ function showCodeOnMap() {
 }
 
 function main() {
-  let width = Math.floor(window.outerWidth*0.7);
-  let height = Math.floor(window.outerHeight*0.6);
-  width = width>1400?1400:(width<400?400:width);
-  height = height>800?800:(height<300?300:height);
-  document.getElementById("mapid").style.width =  width+ "px";
+  let width = Math.floor(window.outerWidth * 0.7);
+  let height = Math.floor(window.outerHeight * 0.6);
+  width = width > 1400 ? 1400 : (width < 400 ? 400 : width);
+  height = height > 800 ? 800 : (height < 300 ? 300 : height);
+  document.getElementById("mapid").style.width =  width + "px";
   document.getElementById("mapid").style.height = height + "px";
 
 
