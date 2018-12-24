@@ -34,12 +34,12 @@ function showRectangle() {
      return;
     }
   }
-  
+
   const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]];
   map.fitBounds(bounds, {maxZoom: map.getZoom() > 18 ? MAX_ZOOM : 18});  // Zoom in, but not to close
   const rect = L.rectangle(bounds, {color: "#"+red+green+blue, weight: 1, opacity: opacity}).addTo(map);
   layers.push(rect);
-  
+
 }
 
 function clearMap() {
@@ -255,6 +255,12 @@ function showCodeOnMap() {
     showRectangle();
   }
 }
+function showIntro() {
+  introJs().start().onexit(function() {
+    document.location.hash = "#nointro";
+    sessionStorage.setItem("nointro", true);
+  });
+}
 
 function main() {
   let width = Math.floor(window.outerWidth * 0.7);
@@ -291,4 +297,8 @@ function main() {
     clearMap();
   });
 
+  document.getElementById("intro_link").addEventListener("click", showIntro);
+  if((document.location.hash.indexOf("nointro") === -1 && !sessionStorage.getItem("nointro")) || document.location.hash == "#intro") {
+    showIntro();
+  }
 }
