@@ -9,3 +9,5 @@ Wikipedia: <a href="https://en.wikipedia.org/wiki/Open_Location_Code">Open Locat
 
 Screenshot:
 [![Screenshot of cvzi.github.io/open-location-code-demo/](static/screenshot.png)](https://cvzi.github.io/open-location-code-demo/index.html)
+
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)

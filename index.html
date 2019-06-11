@@ -31,13 +31,14 @@
 <script src="util.js"></script>
 <script src="script.js"></script>
 <script>
-const ACCESS_TOKEN = "pk.eyJ1IjoiZHJkcmUiLCJhIjoiY2puMzA1bDJ2MDR0cjNrbzlrODRvZ25sOCJ9.Z-WE_6dyg1T6R4jT1vBr8w";
+const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJkcmUiLCJhIjoiY2puMzA1bDJ2MDR0cjNrbzlrODRvZ25sOCJ9.Z-WE_6dyg1T6R4jT1vBr8w'
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", main);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', main)
 } else {
-    main();
+  main()
 }
+
 </script>
 </head>
 <body>
@@ -90,21 +91,21 @@ if (document.readyState === "loading") {
     <p>
     The code digits in base 20:
       <pre><script>
-  let d = "23456789CFGHJMPQRVWX";
-  for(let i = 0; i < 20; i++) {
-    let s = document.createElement("sub");
-    document.currentScript.parentNode.appendChild(document.createTextNode((i > 9 ?" ":"") + d[i]));
-    s.appendChild(document.createTextNode("20"));
-    document.currentScript.parentNode.appendChild(s);
-    document.currentScript.parentNode.appendChild(document.createTextNode(" "));
+  let d = '23456789CFGHJMPQRVWX'
+  for (let i = 0; i < 20; i++) {
+    let s = document.createElement('sub')
+    document.currentScript.parentNode.appendChild(document.createTextNode((i > 9 ? ' ' : '') + d[i]))
+    s.appendChild(document.createTextNode('20'))
+    document.currentScript.parentNode.appendChild(s)
+    document.currentScript.parentNode.appendChild(document.createTextNode(' '))
   }
-  document.currentScript.parentNode.appendChild(document.createTextNode("\n"));
-  for(let i = 0; i < 20; i++) {
-    let s = document.createElement("sub");
-    document.currentScript.parentNode.appendChild(document.createTextNode(i));
-    s.appendChild(document.createTextNode("10"));
-    document.currentScript.parentNode.appendChild(s);
-    document.currentScript.parentNode.appendChild(document.createTextNode(" "));
+  document.currentScript.parentNode.appendChild(document.createTextNode('\n'))
+  for (let i = 0; i < 20; i++) {
+    let s = document.createElement('sub')
+    document.currentScript.parentNode.appendChild(document.createTextNode(i))
+    s.appendChild(document.createTextNode('10'))
+    document.currentScript.parentNode.appendChild(s)
+    document.currentScript.parentNode.appendChild(document.createTextNode(' '))
   }
       </script></pre>
     </p>
