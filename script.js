@@ -75,7 +75,7 @@ function calcCode(ev, length, coords, name, foundcb) {
   document.getElementById("olcode").value = olc;
   document.getElementById("olcode").title = "Full code: " + paddCode(olc);
   highlight(document.getElementById("olcode"), COLORS.yellow);
-  showRectangle(olc);
+  showRectangle();
   if(foundcb) {
     foundcb(olc);
   }
