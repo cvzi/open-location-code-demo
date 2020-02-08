@@ -7,6 +7,8 @@ Take a look at the demo on Github pages at [cvzi.github.io/open-location-code-de
 
 Wikipedia: <a href="https://en.wikipedia.org/wiki/Open_Location_Code">Open Location Code</a>
 
+Specifications: github.com/google<a href="https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc">/open-location-code/docs/olc_definition.adoc</a>
+
 Screenshot:
 [![Screenshot of cvzi.github.io/open-location-code-demo/](static/screenshot.png)](https://cvzi.github.io/open-location-code-demo/index.html)
 
