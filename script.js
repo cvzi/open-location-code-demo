@@ -55,7 +55,7 @@ function calcCode (ev, length, coords, name, foundcb) {
   const query = document.getElementById('location').value
   if (!coords) {
     try {
-      coords = query.match(/[-+]?(\d+\.\d+)\s*,\s*[-+]?(\d+.\d+)/).slice(1).map(s => parseFloat(s))
+      coords = query.match(/([-+]?\d+\.\d+)\s*,\s*([-+]?\d+.\d+)/).slice(1).map(s => parseFloat(s))
     } catch (e) {
       if (ev !== -1) {
         geocode(query, function (coords, name) {
