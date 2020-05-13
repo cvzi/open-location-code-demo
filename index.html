@@ -19,17 +19,23 @@
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-  crossorigin=""/>
+  crossorigin="anonymous"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/introjs.css" 
   integrity="sha256-OYXGS5m4oWZAAqoAKpf7Y3bIdzdd9jBfly/xCavEpGw=" 
   crossorigin="anonymous">
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-  crossorigin=""></script>
-<script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/intro.min.js"></script>
-<script src="util.js"></script>
-<script src="script.js"></script>
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/openlocationcode/1.0.1/openlocationcode.min.js"
+  integrity="sha512-6ModQDn/1AOnLfvBseofB2QzaUnUnOythpdqIJjfCNzC7dQN3wTLncH/WXrNPz3Pj9l3vu99C5KFQimsURKANg=="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/intro.min.js"
+  integrity="sha384-orLvmd6Oh0RU4pTJsSZscdgd/08cU0SsrhK2ML/kYH4OONBHCNKjiA9dVla1L8lm"
+  crossorigin="anonymous"></script>
+<script src="util.js"
+  integrity="sha512-ZbPTUirr+qQomBnF7IriSNG85UB/sU3Hfy7qRBPCTf8g9r9kusOiajbNWz6HqymJfoEaQ25MaYnBEUSzxZApog=="></script>
+<script src="script.js"
+  integrity="sha512-jkKJNGTYP41hQLo5I5IaOVSvh49XlNbghwwed3Ifso6Y1IhxAUSST+N/qPYE/0Kzpr9zPD4qy6cXdlWiF4u7bg=="></script>
 <script>
 const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJkcmUiLCJhIjoiY2puMzA1bDJ2MDR0cjNrbzlrODRvZ25sOCJ9.Z-WE_6dyg1T6R4jT1vBr8w'
 
@@ -78,7 +84,7 @@ if (document.readyState === 'loading') {
       <button id="btn_clear" title="Reset the map and the form fields" data-step="6" data-intro="Reset everything and start over">Clear</button> 
       <button id="btn_grid" title="Show a grid around the current plus code" data-step="5" data-intro="This buttons shows a grid of all the other Plus Codes around the current Code">Show grid</button> 
     </p>
-    <div><pre id="statusold"></pre><pre id="status"></pre></div>
+    <div><span id="statusheading">Log:</span><pre id="statusold"></pre><pre id="status"></pre></div>
   </div>
   <div class="fl" id="desc">
     <p>

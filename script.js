@@ -27,16 +27,41 @@ function showRectangle () {
     codeArea = OpenLocationCode.decode(fullolc)
     document.getElementById('olcode').title = 'Full code: ' + paddCode(olc)
   } catch (e) {
-    if (e) {
+    if (olc.indexOf('+') !== -1) {
+      highlight(document.getElementById('olcode'), COLORS.yellow)
+      geocode(olc, function (coords, name) {
+        if (coords) {
+          const newfullolc = OpenLocationCode.encode(coords[0], coords[1], OpenLocationCode.CODE_PRECISION_EXTRA)
+          document.getElementById('olcode').value = newfullolc
+          highlight(document.getElementById('olcode'), COLORS.green)
+          showRectangle()
+          found = true
+        } else {
+          // Might be local code without location -> use current map position as location:
+          const localOlc = olc.trim().split(/\s/)[0]
+          try {
+            const newfullolc = OpenLocationCode.recoverNearest(localOlc, map.getCenter().lat, map.getCenter().lng)
+            document.getElementById('olcode').value = newfullolc
+            print('Assuming map center as location for local code: ' + localOlc + '\n -> ' + newfullolc)
+            highlight(document.getElementById('olcode'), COLORS.green)
+            showRectangle()
+            found = true
+          } catch (recoverException) {
+            console.log(e)
+            print(e + '\nInput: ' + olc + '\n' + recoverException + '\nCode: ' + localOlc)
+          }
+        }
+      })
+    } else if (e) {
       print(e + '\nWithout padding: ' + olc)
       highlight(document.getElementById('olcode'), COLORS.red)
-      return
     }
+    return
   }
 
   const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]]
-  map.fitBounds(bounds, {maxZoom: map.getZoom() > 18 ? MAX_ZOOM : 18})  // Zoom in, but not to close
-  const rect = L.rectangle(bounds, {color: '#' + red + green + blue, weight: 1, opacity: opacity}).addTo(map)
+  map.fitBounds(bounds, { maxZoom: map.getZoom() > 18 ? MAX_ZOOM : 18 }) // Zoom in, but not to close
+  const rect = L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity: opacity }).addTo(map)
   layers.push(rect)
 }
 
@@ -157,11 +182,11 @@ function step (ev) {
 function shorten () {
   // Shorten the code one step and show the result on the map
   let olc = document.getElementById('olcode').value
-  if (olc.endsWith('+')) {  // No precision // Extra precision: 42225322+ -> 42222253+
+  if (olc.endsWith('+')) { // No precision // Extra precision: 42225322+ -> 42222253+
     olc = olc.slice(0, olc.length - 3) + '+'
   } else if (!olc.slice(0, olc.length - 2).endsWith('+')) { // Extra precision: 42222225+22232 -> 42222225+2223
     olc = olc.slice(0, olc.length - 1)
-  } else {  // Normal precision: 42222253+22 -> 42222253
+  } else { // Normal precision: 42222253+22 -> 42222253
     olc = olc.slice(0, olc.length - 2)
   }
   document.getElementById('olcode').value = olc
@@ -200,7 +225,7 @@ function grid () {
 
   // Create grid
 
-  const layerGroup = L.layerGroup()  // Group all rectangles and text together and draw them at once
+  const layerGroup = L.layerGroup() // Group all rectangles and text together and draw them at once
 
   for (let y = -2; y < 3; y++) {
     for (let x = -3; x < 4; x++) {
@@ -212,7 +237,7 @@ function grid () {
 
       const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]]
 
-      L.rectangle(bounds, {color: '#' + red + green + blue, weight: 1, opacity: opacity}).addTo(layerGroup)
+      L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity: opacity }).addTo(layerGroup)
 
       // Add transparent marker with text tooltip
       const marker = new L.marker([0.5 * (bounds[0][0] + bounds[1][0]), 0.5 * (bounds[0][1] + bounds[1][1])], { opacity: 0.01 })
@@ -220,7 +245,7 @@ function grid () {
       if (label.length >= 11) {
         label = '+' + label.split('+')[1]
       }
-      marker.bindTooltip(label, {permanent: true, className: 'mapgridlabel', direction: 'center', offset: [0, 0]})
+      marker.bindTooltip(label, { permanent: true, className: 'mapgridlabel', direction: 'center', offset: [0, 0] })
       marker.addTo(layerGroup)
     }
   }

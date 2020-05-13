@@ -1,13 +1,36 @@
 ﻿function geocode (query, cb) {
+  // Geocode via mapbox service
+  let localOlc = null
+
+  // Check for a pluscode with location
+  const m = query.trim().match(/^(\w+\+\w*)\s+(\S.+)/)
+
+  if (m && m.length > 2 && m[1].length > 2 && m[2].length > 1) {
+    localOlc = m[1]
+    query = m[2].trim()
+  }
+
   const url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
   const req = new XMLHttpRequest()
   req.overrideMimeType('application/json')
   req.onreadystatechange = function () {
     if (req.readyState === 4 && req.status === 200) {
-      let data = JSON.parse(req.responseText)
-      if (data['features']) {
-        let coords = [data['features'][0]['center'][1], data['features'][0]['center'][0]]
-        cb(coords, data['features'][0]['place_name'])
+      const data = JSON.parse(req.responseText)
+      if ('features' in data && data.features.length) {
+        const coords = [data.features[0].center[1], data.features[0].center[0]]
+        if (localOlc) {
+          try {
+            const fullOlc = OpenLocationCode.recoverNearest(localOlc, coords[0], coords[1])
+            const codeArea = OpenLocationCode.decode(fullOlc)
+            print('Local code: ' + localOlc + ' ' + data.features[0].place_name + '\n -> ' + fullOlc)
+            cb([codeArea.latitudeCenter, codeArea.longitudeCenter], data.features[0].place_name)
+            return
+          } catch (e) {
+            console.log('Error in recoverNearest(' + localOlc + ', ' + coords[0] + ', ' + coords[1] + '):\n' + e)
+            print('Recovered from local code failed for: ' + localOlc)
+          }
+        }
+        cb(coords, data.features[0].place_name)
       } else {
         cb(null)
       }
@@ -100,9 +123,9 @@ function moveCode (olc, eastwest, northsouth) {
 
   const old = olc
 
-  if (olc.endsWith('+') || olc.length === 11) {  // Lat-lng version / Normal precision
+  if (olc.endsWith('+') || olc.length === 11) { // Lat-lng version / Normal precision
     if (olc.indexOf('+') !== -1) {
-      olc = olc.replace('+', '')  // Remove + for easier access with indices
+      olc = olc.replace('+', '') // Remove + for easier access with indices
     }
 
     const lastCharIndex = olc.length - (olc.endsWith('+') ? 2 : 1)
@@ -145,7 +168,7 @@ function moveCode (olc, eastwest, northsouth) {
     }
 
     return paddCode(olc)
-  } else {  // 20 rectangles version / High precision
+  } else { // 20 rectangles version / High precision
     /*
     Grid:
     R    V    W    X        16   17   18   19        0    1    2    3
@@ -164,10 +187,10 @@ function moveCode (olc, eastwest, northsouth) {
     // Move east/west
     const rowNumber = Math.floor(value / 4)
     const newRowNumber = Math.floor((value + eastwest) / 4)
-    if (rowNumber !== newRowNumber) {  // Out of row
-      const lastChar = olc.charAt(charIndex)  // Shorten the code one digit
-      olc = moveCode(olc.substring(0, old.length - 1), newRowNumber - rowNumber, 0)  //  Move recursively
-      olc += lastChar  // Add the char again
+    if (rowNumber !== newRowNumber) { // Out of row
+      const lastChar = olc.charAt(charIndex) // Shorten the code one digit
+      olc = moveCode(olc.substring(0, old.length - 1), newRowNumber - rowNumber, 0) //  Move recursively
+      olc += lastChar // Add the char again
 
       value = value + eastwest
       value -= (newRowNumber - rowNumber) * 4
@@ -179,12 +202,12 @@ function moveCode (olc, eastwest, northsouth) {
     }
 
     // Move north/south
-    if (value + 4 * northsouth < 0 || value + 4 * northsouth >= 20) {  // Out of box
+    if (value + 4 * northsouth < 0 || value + 4 * northsouth >= 20) { // Out of box
       const boxDiff = Math.floor((value + 4 * northsouth) / 20)
 
-      const lastChar = olc.charAt(charIndex)  // Shorten the code one digit
-      olc = moveCode(olc.substring(0, old.length - 1), 0, boxDiff)  //  Move recursively
-      olc += lastChar  // Add the char again
+      const lastChar = olc.charAt(charIndex) // Shorten the code one digit
+      olc = moveCode(olc.substring(0, old.length - 1), 0, boxDiff) //  Move recursively
+      olc += lastChar // Add the char again
 
       value = (value + 4 * northsouth) % 20
       if (value < 0) {
