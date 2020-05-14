@@ -43,18 +43,18 @@ function showRectangle () {
           try {
             const newfullolc = OpenLocationCode.recoverNearest(localOlc, map.getCenter().lat, map.getCenter().lng)
             document.getElementById('olcode').value = newfullolc
-            print('Assuming map center as location for local code: ' + localOlc + '\n -> ' + newfullolc)
+            print('ℹ️ Assuming map center as location for local code: ' + localOlc + '\n -> ' + newfullolc)
             highlight(document.getElementById('olcode'), COLORS.green)
             showRectangle()
             found = true
           } catch (recoverException) {
             console.log(e)
-            print(e + '\nInput: ' + olc + '\n' + recoverException + '\nCode: ' + localOlc)
+            print('⚠️' + e + '\nInput: ' + olc + '\n' + recoverException + '\nCode: ' + localOlc)
           }
         }
       })
     } else if (e) {
-      print(e + '\nWithout padding: ' + olc)
+      print('⚠️' + e + '\nWithout padding: ' + olc)
       highlight(document.getElementById('olcode'), COLORS.red)
     }
     return
@@ -86,10 +86,10 @@ function calcCode (ev, length, coords, name, foundcb) {
       if (ev !== -1) {
         geocode(query, function (coords, name) {
           calcCode(-1, length, coords, name, foundcb)
-          print('Geocoding found: ' + name + '\n -> ' + coords)
+          print('🏙️ Geocoding found: ' + name + '\n -> ' + coords)
         })
       } else {
-        print('Geocoding not found: ' + query)
+        print('⚠️ Geocoding not found: ' + query)
         highlight(document.getElementById('location'), COLORS.red)
       }
       return
@@ -121,7 +121,7 @@ function animate (ev, length, coords, name) {
         document.getElementById('location').value = codeArea.latitudeCenter + ', ' + codeArea.longitudeCenter
       } catch (e) {
         if (e) {
-          print(e + '\nWithout padding: ' + olc)
+          print('⚠️' + e + '\nWithout padding: ' + olc)
           highlight(document.getElementById('olcode'), COLORS.red)
           return
         }
@@ -168,7 +168,7 @@ function step (ev) {
         document.getElementById('location').value = codeArea.latitudeCenter + ', ' + codeArea.longitudeCenter
       } catch (e) {
         if (e) {
-          print(e + '\nWithout padding: ' + olc)
+          print('⚠️' + e + '\nWithout padding: ' + olc)
           highlight(document.getElementById('olcode'), COLORS.red)
           return
         }
@@ -218,7 +218,7 @@ function grid () {
     document.getElementById('olcode').title = 'Full code: ' + paddCode(olc)
   } catch (e) {
     if (e) {
-      print(e + '\nWithout padding: ' + olc)
+      print('⚠️' + e + '\nWithout padding: ' + olc)
       highlight(document.getElementById('olcode'), COLORS.red)
       return
     }
@@ -290,17 +290,25 @@ function myLocation () {
     gwid = null
     return
   }
+  const abort = function () {
+    document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+    navigator.geolocation.clearWatch(gwid)
+    gwid = null
+  }
   let lastPos = null
   document.querySelector('.mylocation span').style.backgroundPosition = '1em'
+  print('🛰️ Waiting for location fix')
   navigator.geolocation.getCurrentPosition(function onSuccess (position) {
     document.querySelector('.mylocation span').style.backgroundPosition = '2em'
     lastPos = Math.round(10000 * position.coords.latitude) + ',' + Math.round(10000 * position.coords.longitude)
     document.getElementById('location').value = `${position.coords.latitude}, ${position.coords.longitude}`
+    print(`📌 ${position.coords.latitude}, ${position.coords.longitude}`)
     highlight(document.getElementById('location'), COLORS.green)
     findCode()
     navigator.geolocation.clearWatch(gwid)
     gwid = navigator.geolocation.watchPosition(function onWatchSuccess (position) {
       const pos = Math.round(10000 * position.coords.latitude) + ',' + Math.round(10000 * position.coords.longitude)
+      print(`📌 ${position.coords.latitude}, ${position.coords.longitude}`)
       if (pos === lastPos) {
         return
       }
@@ -309,7 +317,7 @@ function myLocation () {
       highlight(document.getElementById('location'), COLORS.green)
       findCode()
     }, function onWatchError (error) {
-      print(`Error(${error.code}): ${error.message}`)
+      print(`⚠️ Error(${error.code}): ${error.message}`)
       navigator.geolocation.clearWatch(gwid)
       document.querySelector('.mylocation span').style.backgroundPosition = '0em'
       gwid = null
@@ -317,16 +325,18 @@ function myLocation () {
       enableHighAccuracy: true
     })
 
-    window.setTimeout(function () {
-      document.querySelector('.mylocation span').style.backgroundPosition = '0em'
-      navigator.geolocation.clearWatch(gwid)
-      gwid = null
-    }, 20000)
+    const abortAfter20sAndFix = function() {
+      if (lastPos != null) {
+        abort()
+      } else if(gwid != null) {
+        // Wait another 20s for a GPS fix
+        window.setTimeout(abortAfter20sAndFix, 20000)
+      }
+    }
+    window.setTimeout(abortAfter20sAndFix, 20000)
   }, function onError (error) {
-    print(`Error(${error.code}): ${error.message}`)
+    print(`⚠️ Error(${error.code}): ${error.message}`)
     document.querySelector('.mylocation span').style.backgroundPosition = '0em'
-  }, {
-    enableHighAccuracy: true
   })
 }
 

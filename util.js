@@ -27,7 +27,7 @@
             return
           } catch (e) {
             console.log('Error in recoverNearest(' + localOlc + ', ' + coords[0] + ', ' + coords[1] + '):\n' + e)
-            print('Recovered from local code failed for: ' + localOlc)
+            print('⚠️ Recover from local code failed for: ' + localOlc)
           }
         }
         cb(coords, data.features[0].place_name)
