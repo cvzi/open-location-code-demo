@@ -284,10 +284,20 @@ function showIntro () {
 }
 
 function main () {
+  const isMobile = navigator.userAgent.match(/mobile/i)
+  if (isMobile) {
+    document.getElementById('desc').style.maxWidth = window.screen.width - 50 + 'px'
+    document.getElementsByName('viewport')[0].setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0')
+  }
+
   let width = Math.floor(window.outerWidth * 0.7)
   let height = Math.floor(window.outerHeight * 0.6)
   width = width > 1400 ? 1400 : (width < 400 ? 400 : width)
   height = height > 800 ? 800 : (height < 300 ? 300 : height)
+  if (isMobile) {
+    width = window.screen.width - 30
+    height = Math.min(width, height)
+  }
   document.getElementById('mapid').style.width = width + 'px'
   document.getElementById('mapid').style.height = height + 'px'
 
