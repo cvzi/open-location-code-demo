@@ -6,6 +6,7 @@ figure {margin:0}
 .fl {float:left}
 #ctrl {padding-right:15px; margin-right:15px}
 #desc {padding-right:15px; margin-right:15px; max-width:740px}
+#desc pre {overflow:auto}
 #attribution { font-size:smaller; padding: 5px; margin: 0 auto; max-width: 1500px}
 #mapid { height: 500px; width: 600px}
 #status { margin-top:0px}
