@@ -9,7 +9,7 @@ figure {margin:0}
 #desc pre {overflow:auto}
 #attribution { font-size:smaller; padding: 5px; margin: 0 auto; max-width: 1500px}
 #mapid { height: 500px; width: 600px}
-#status { margin-top:0px}
+#status { margin-top:0px; overflow-y:auto; }
 #statusold { margin:0px; color:gray; max-height:100px; overflow-y:auto; overflow-x:hidden}
 #statusheading {font-size:small}
 pre sub {color:silver}
