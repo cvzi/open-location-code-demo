@@ -344,6 +344,7 @@ function main () {
   const isMobile = navigator.userAgent.match(/mobile/i)
   if (isMobile) {
     document.getElementById('desc').style.maxWidth = window.screen.width - 50 + 'px'
+    document.getElementById('ctrl').style.maxWidth = window.screen.width - 50 + 'px'
     document.getElementsByName('viewport')[0].setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0')
   }
 
