@@ -8,6 +8,7 @@ const MAX_ZOOM = 24
 var map
 var iv
 const layers = []
+var gwid
 
 function showRectangle () {
   // Show the rectangle of the current plus code
@@ -283,21 +284,51 @@ function showIntro () {
   })
 }
 function myLocation () {
+  if (gwid != null) {
+    navigator.geolocation.clearWatch(gwid)
+    document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+    gwid = null
+    return
+  }
+  let lastPos = null
   document.querySelector('.mylocation span').style.backgroundPosition = '1em'
   navigator.geolocation.getCurrentPosition(function onSuccess (position) {
     document.querySelector('.mylocation span').style.backgroundPosition = '2em'
+    lastPos = Math.round(10000 * position.coords.latitude) + ',' + Math.round(10000 * position.coords.longitude)
     document.getElementById('location').value = `${position.coords.latitude}, ${position.coords.longitude}`
     highlight(document.getElementById('location'), COLORS.green)
     findCode()
+    navigator.geolocation.clearWatch(gwid)
+    gwid = navigator.geolocation.watchPosition(function onWatchSuccess (position) {
+      const pos = Math.round(10000 * position.coords.latitude) + ',' + Math.round(10000 * position.coords.longitude)
+      if (pos === lastPos) {
+        return
+      }
+      lastPos = pos
+      document.getElementById('location').value = `${position.coords.latitude}, ${position.coords.longitude}`
+      highlight(document.getElementById('location'), COLORS.green)
+      findCode()
+    }, function onWatchError (error) {
+      print(`Error(${error.code}): ${error.message}`)
+      navigator.geolocation.clearWatch(gwid)
+      document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+      gwid = null
+    }, {
+      enableHighAccuracy: true
+    })
+
     window.setTimeout(function () {
       document.querySelector('.mylocation span').style.backgroundPosition = '0em'
-    }, 10000)
+      navigator.geolocation.clearWatch(gwid)
+      gwid = null
+    }, 20000)
   }, function onError (error) {
     print(`Error(${error.code}): ${error.message}`)
     document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+  }, {
+    enableHighAccuracy: true
   })
 }
-
 
 function main () {
   const isMobile = navigator.userAgent.match(/mobile/i)
