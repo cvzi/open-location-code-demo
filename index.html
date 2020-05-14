@@ -35,7 +35,7 @@
 <script src="util.js"
   integrity="sha512-ZbPTUirr+qQomBnF7IriSNG85UB/sU3Hfy7qRBPCTf8g9r9kusOiajbNWz6HqymJfoEaQ25MaYnBEUSzxZApog=="></script>
 <script src="script.js"
-  integrity="sha512-XMMOYNP4tQPQcaLsav/lzIrCM/vxsYDHD3SG/SxeR3BKB0Idnnn9Tz95w6rvNTh5IVp15H9usLLHpErejHCs5Q=="></script>
+  integrity="sha512-AfHnV4rATaz8LqqK5Jtp3jZYLearwOJjg7Qb4h6pEwCn9uCf4m/2do0q6alHkwQ+bPxGcVQHXrB74AmB1sHeyQ=="></script>
 <script>
 const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJkcmUiLCJhIjoiY2thNWJ3YzdmMDgwejNrbGg5cXZ0ZDV4cSJ9.br--ws1KqNVWKWCyvEc6Iw'
 
@@ -75,6 +75,14 @@ if (document.readyState === 'loading') {
   <div class="fl" id="ctrl">
     <p>
       Location: <input type="text" id="location" value="49.4120625,8.7104375" data-step="1" data-intro="Enter a location name/coordinates or double click on the map to select a location">
+      <script>
+      if ('geolocation' in navigator) {
+        const geoButton = document.currentScript.parentNode.insertBefore(document.createElement('button'), document.currentScript)
+        geoButton.classList.add('mylocation')
+        geoButton.appendChild(document.createElement('span'))
+        geoButton.title = 'Use current device location'
+      }
+      </script>
       <button id="btn_find" data-step="2" data-intro="Click here to calculate the corresponding Open Location Code">Calculate</button> Plus code:<input type="text" id="olcode" value="" data-step="3" data-intro="The calculated Open Location Code/Plus Code is displayed here">
     </p>
     <p>

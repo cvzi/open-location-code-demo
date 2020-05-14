@@ -282,6 +282,22 @@ function showIntro () {
     sessionStorage.setItem('nointro', true)
   })
 }
+function myLocation () {
+  document.querySelector('.mylocation span').style.backgroundPosition = '1em'
+  navigator.geolocation.getCurrentPosition(function onSuccess (position) {
+    document.querySelector('.mylocation span').style.backgroundPosition = '2em'
+    document.getElementById('location').value = `${position.coords.latitude}, ${position.coords.longitude}`
+    highlight(document.getElementById('location'), COLORS.green)
+    findCode()
+    window.setTimeout(function () {
+      document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+    }, 10000)
+  }, function onError (error) {
+    print(`Error(${error.code}): ${error.message}`)
+    document.querySelector('.mylocation span').style.backgroundPosition = '0em'
+  })
+}
+
 
 function main () {
   const isMobile = navigator.userAgent.match(/mobile/i)
@@ -328,6 +344,9 @@ function main () {
     document.getElementById('olcode').value = ''
     clearMap()
   })
+  if (document.querySelector('.mylocation')) {
+    document.querySelector('.mylocation').addEventListener('click', myLocation)
+  }
 
   document.getElementById('intro_link').addEventListener('click', showIntro)
   if ((document.location.hash.indexOf('nointro') === -1 && !sessionStorage.getItem('nointro')) || document.location.hash === '#intro') {
