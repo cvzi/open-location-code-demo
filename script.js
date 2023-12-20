@@ -1,14 +1,14 @@
-﻿const COLORS = {
+const COLORS = {
   red: '#fcc',
   green: '#baf0ba',
   yellow: '#ffa'
 }
 const MAX_ZOOM = 24
 
-var map
-var iv
+let map
+let iv
 const layers = []
-var gwid
+let gwid
 
 function showRectangle () {
   // Show the rectangle of the current plus code
@@ -62,7 +62,7 @@ function showRectangle () {
 
   const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]]
   map.fitBounds(bounds, { maxZoom: map.getZoom() > 18 ? MAX_ZOOM : 18 }) // Zoom in, but not to close
-  const rect = L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity: opacity }).addTo(map)
+  const rect = L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity }).addTo(map)
   layers.push(rect)
 }
 
@@ -238,7 +238,7 @@ function grid () {
 
       const bounds = [[codeArea.latitudeLo, codeArea.longitudeLo], [codeArea.latitudeHi, codeArea.longitudeHi]]
 
-      L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity: opacity }).addTo(layerGroup)
+      L.rectangle(bounds, { color: '#' + red + green + blue, weight: 1, opacity }).addTo(layerGroup)
 
       // Add transparent marker with text tooltip
       const marker = new L.marker([0.5 * (bounds[0][0] + bounds[1][0]), 0.5 * (bounds[0][1] + bounds[1][1])], { opacity: 0.01 })
@@ -325,10 +325,10 @@ function myLocation () {
       enableHighAccuracy: true
     })
 
-    const abortAfter20sAndFix = function() {
+    const abortAfter20sAndFix = function () {
       if (lastPos != null) {
         abort()
-      } else if(gwid != null) {
+      } else if (gwid != null) {
         // Wait another 20s for a GPS fix
         window.setTimeout(abortAfter20sAndFix, 20000)
       }
@@ -361,7 +361,7 @@ function main () {
 
   map = L.map('mapid').setView([49.41, 8.71], 11)
 
-  //L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  // L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
   //  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -371,7 +371,6 @@ function main () {
     id: 'mapbox/streets-v11',
     accessToken: ACCESS_TOKEN
   }).addTo(map)
-
 
   map.on('dblclick', onMapClick)
   map.on('contextmenu', onMapClick)
